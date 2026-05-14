@@ -7,9 +7,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # OPTIONS
 # --------------------------------------------------------
 
-option(AUTO_FETCH_SUBMODULES "Auto init/update git submodules at configure time" ON)
-option(ENABLE_ASAN "Enable AddressSanitizer" ON)
-option(ENABLE_C_FLAGS "Enable additional compiler warnings" ON)
+set(AUTO_FETCH_SUBMODULES   ON) # Auto init/update git submodules at configure time
+set(ENABLE_ASAN             OFF) # Enable AddressSanitizer
+set(ENABLE_C_FLAGS          OFF) # Enable additional compiler warnings
+set(CUB_FILE "${CMAKE_SOURCE_DIR}/test.cub" CACHE FILEPATH "Path to .cub file")
 
 # --------------------------------------------------------
 # INITIALIZATION
@@ -31,7 +32,7 @@ message(STATUS "ENABLE_C_FLAGS=${ENABLE_C_FLAGS}")
 # VALGRIND LEAK CHECK
 # --------------------------------------------------------
 add_custom_target(leak_check
-        COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $<TARGET_FILE:${PROJECT_NAME}>
+        COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $<TARGET_FILE:${PROJECT_NAME}> "${CUB_FILE}"
         DEPENDS ${PROJECT_NAME}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Leak Check with Valgrind"
@@ -101,13 +102,13 @@ if (ENABLE_ASAN AND CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
 else ()
     file(APPEND ${WRAPPER} "unset ASAN_OPTIONS\n")
 endif ()
+message(STATUS "Creating wrapper...")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND echo "exec $<TARGET_FILE:${PROJECT_NAME}> \"\$@\"" >> ${WRAPPER}
         COMMAND chmod +x ${WRAPPER}
-        COMMENT "Moving executable and creating ASan wrapper"
         VERBATIM
 )
 message("${WRAPPER}")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${MLX_LIB})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${MLX_LIB} X11 Xext m)

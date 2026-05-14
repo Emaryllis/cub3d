@@ -1,35 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   win_listeners.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/20 00:33:06 by egoh              #+#    #+#             */
-/*   Updated: 2026/05/12 13:48:45 by egoh             ###   ########.fr       */
+/*   Created: 2026/05/12 11:21:06 by egoh              #+#    #+#             */
+/*   Updated: 2026/05/12 11:56:35 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 
-static void	init_struct(t_game *game)
+static int	close_lsr(const t_game *game)
 {
-	game->mlx = mlx_init();
-	game->win = mlx_new_window(game->mlx, WIN_W, WIN_H, WIN_TITLE);
+	mlx_loop_end(game->mlx);
+	return (EXIT_SUCCESS);
 }
 
-int	main(int ac, char **av)
+static int	handle_keypress(const int keysym, const t_game *game)
 {
-	t_game	game;
-
-	if (ac != 2 || av[1][0] == '\0')
-		return (parse_error("No file found.") + 2);
-	ft_bzero(&game, sizeof(t_game));
-	if (parse_file(&game, av[1]) == -1)
-		return (cleanup(&game), EXIT_FAILURE);
-	init_struct(&game);
-	init_listener(&game);
-	mlx_loop(game.mlx);
-	cleanup(&game);
+	if (keysym == KEY_ESC)
+		return (close_lsr(game));
 	return (EXIT_SUCCESS);
+}
+
+void	init_listener(t_game *game)
+{
+	mlx_hook(game->win, KeyPress, KeyPressMask, handle_keypress, game);
+	mlx_hook(game->win, DestroyNotify, StructureNotifyMask, close_lsr, game);
 }
