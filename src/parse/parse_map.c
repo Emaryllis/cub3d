@@ -44,7 +44,7 @@ static int	parse_map_line(char *line, t_tile *row, int width, bool *has_plyr)
 {
 	int		i;
 
-	if (ft_strcmp(line, "\n") == 0)
+	if (!ft_strcmp(line, "\n"))
 		return (parse_error(INVALID_MAP));
 	i = 0;
 	while (line[i] && line[i] != '\n' && i < width)

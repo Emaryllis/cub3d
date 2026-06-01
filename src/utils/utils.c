@@ -56,4 +56,5 @@ void	*dynamic_realloc(void **ptr, size_t size, size_t *capacity)
 	}
 	*capacity = *capacity * 2;
 	*ptr = newp;
+	return (newp);
 }
