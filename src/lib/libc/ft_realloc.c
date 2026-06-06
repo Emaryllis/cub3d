@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-void	*ft_memcpy(void *dest, const void *src, size_t n)
+static void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
 	unsigned char	*d;
 	unsigned char	*s;

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <stdlib.h>
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(const char *s, int del_nl)
 {
 	int		i;
 	char	*copy;
@@ -26,6 +26,8 @@ char	*ft_strdup(const char *s)
 	while (s[i])
 	{
 		copy[i] = s[i];
+		if (copy[i] == '\n' && del_nl)
+			copy[i] = '\0';
 		i++;
 	}
 	copy[i] = '\0';

@@ -22,7 +22,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-char	*get_next_line(int fd);
+char	*get_next_line(int fd, int ret_stash);
 char	*extract_line(char *line, char *stash, int *eol_loc, int fd);
 char	*init_line(char *stash, int *eol_loc);
 size_t	locate_eol(char *line);

@@ -1,3 +1,4 @@
+_This project has been created as part of the 42 curriculum by egoh._
 ## How to run the project:
 
 ```bash

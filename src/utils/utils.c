@@ -28,33 +28,12 @@ int	is_empty(const char *s)
 
 int	parse_error(const char *msg)
 {
-	write(2, "Error: ", 8);
-	write(2, msg, ft_strlen(msg));
-	write(2, "\n", 2);
+	const char	*err = strerror(errno);
+
+	write(STDERR_FILENO, "Error: ", 8);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "! (", 3);
+	write(STDERR_FILENO, err, ft_strlen(err));
+	write(STDERR_FILENO, ")\n", 2);
 	return (-1);
-}
-
-/**
- * Doubles element capacity and reallocates the buffer.
- * On success: updates *ptr and *capacity.
- * On failure: frees *ptr, sets *ptr to NULL, and returns NULL.
- * @param ptr       Address of the buffer pointer to grow.
- * @param size      Size of one element (e.g. sizeof(char *)).
- * @param capacity  Number of elements in the pointer.
- * @return          New buffer pointer on success, NULL on failure.
- */
-void	*dynamic_realloc(void **ptr, size_t size, size_t *capacity)
-{
-	void	*newp;
-
-	newp = ft_realloc(ptr, size * *capacity, size * *capacity * 2);
-	if (!newp)
-	{
-		free(*ptr);
-		*ptr = NULL;
-		return (NULL);
-	}
-	*capacity = *capacity * 2;
-	*ptr = newp;
-	return (newp);
 }

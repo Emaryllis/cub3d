@@ -1,30 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup_utils.c                                    :+:      :+:    :+:   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/14 13:21:07 by egoh              #+#    #+#             */
-/*   Updated: 2026/05/14 13:21:07 by egoh             ###   ########.fr       */
+/*   Created: 2025/05/07 19:20:42 by egoh              #+#    #+#             */
+/*   Updated: 2025/09/11 18:54:37 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "main.h"
-
-void	free_arr_range(char **arr, size_t start, size_t end)
+int	ft_isdigit(int c)
 {
-	size_t	i;
-
-	i = start;
-	while (i < end)
-		free(arr[i++]);
-	free(arr);
-}
-
-void	free_arr(char **arr, int start)
-{
-	while (arr[start])
-		free(arr[start++]);
-	free(arr);
+	return (c >= '0' && c <= '9');
 }

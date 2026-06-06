@@ -14,12 +14,16 @@
 
 void	cleanup(t_game *game)
 {
-	free(game->config.no_path);
-	free(game->config.so_path);
-	free(game->config.we_path);
-	free(game->config.ea_path);
-	if (game->config.map)
-		free_arr_range((char **)game->config.map, 0, game->config.map_h);
+	const t_config	config = game->config;
+
+	free(config.no_path);
+	free(config.so_path);
+	free(config.we_path);
+	free(config.ea_path);
+	if (config.map.grid)
+		free_arr_range((char **)config.map.grid, 0, game->config.map.cap.y);
+	if (config.map.grid_len)
+		free(config.map.grid_len);
 	if (game->mlx && game->win)
 		mlx_destroy_window(game->mlx, game->win);
 	if (game->mlx)

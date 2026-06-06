@@ -75,12 +75,14 @@ char	*extract_line(char *line, char *stash, int *eol_loc, int fd)
 	return (line);
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line(int fd, int ret_stash)
 {
 	static char	stash[BUFFER_SIZE + 1];
 	char		*line;
 	int			eol_loc;
 
+	if (ret_stash)
+		return (stash);
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	eol_loc = -1;

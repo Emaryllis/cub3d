@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_elem.c                                       :+:      :+:    :+:   */
+/*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/12 13:41:42 by egoh              #+#    #+#             */
-/*   Updated: 2026/05/12 13:46:21 by egoh             ###   ########.fr       */
+/*   Created: 2026/05/12 13:39:37 by egoh              #+#    #+#             */
+/*   Updated: 2026/05/14 11:40:27 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
+#include "parse.h"
 
 static int	parse_color_val(const char *str)
 {
@@ -19,32 +19,18 @@ static int	parse_color_val(const char *str)
 	if (!str || !*str)
 		return (-1);
 	val = 0;
-	while (*str >= '0' && *str <= '9')
+	while (ft_isdigit(*str))
 	{
 		val = val * 10 + (*str - '0');
 		if (val > 255)
 			return (-1);
 		str++;
 	}
+	while (*str == '\n')
+		str++;
 	if (*str != '\0')
 		return (-1);
 	return (val);
-}
-
-static int	check_commas(const char *line)
-{
-	int	i;
-
-	if (!line)
-		return (-1);
-	i = 0;
-	while (*line)
-	{
-		if (*line == ',')
-			i++;
-		line++;
-	}
-	return (i);
 }
 
 /**
@@ -62,11 +48,13 @@ static int	parse_color(const char *line, int out[3])
 		return (parse_error(COLOR_LEN));
 	parts = ft_split(line, ',');
 	if (!parts)
-		return (parse_error(MALLOC_ERR));
+		return (parse_error(H_SPLIT_ERR));
 	i = 0;
 	while (parts[i] && i < 3)
 	{
 		out[i] = parse_color_val(parts[i]);
+		if (DEBUG)
+			printf("Color: %d, %d, %d\n", out[0], out[1], out[2]);
 		if (out[i] == -1)
 			return (free_arr(parts, i), parse_error(COLOR_RANGE));
 		free(parts[i++]);
@@ -78,35 +66,36 @@ static int	parse_color(const char *line, int out[3])
 }
 
 /** Simple switch statement to do basic parsing when given a line. */
-int	parse_element(t_config *config, const char *line)
+static int	parse_header(t_config *config, const char *line)
 {
 	char	**parts;
 	int		ret;
 
 	parts = ft_split(line, ' ');
 	if (!parts)
-		return (parse_error(MALLOC_ERR));
+		return (parse_error(H_SPLIT_ERR));
 	if (!parts[0] || !parts[1])
-		return (free_arr(parts, 0), parse_error("Invalid element format"));
+		return (free_arr(parts, 0), parse_error(INVALID_ELEM_F));
 	if (ft_strcmp(parts[0], "NO") == 0)
-		ret = parse_path(&config->no_path, parts[1]);
+		ret = parse_path(parts[1], &config->no_path);
 	else if (ft_strcmp(parts[0], "SO") == 0)
-		ret = parse_path(&config->so_path, parts[1]);
+		ret = parse_path(parts[1], &config->so_path);
 	else if (ft_strcmp(parts[0], "WE") == 0)
-		ret = parse_path(&config->we_path, parts[1]);
+		ret = parse_path(parts[1], &config->we_path);
 	else if (ft_strcmp(parts[0], "EA") == 0)
-		ret = parse_path(&config->ea_path, parts[1]);
+		ret = parse_path(parts[1], &config->ea_path);
 	else if (ft_strcmp(parts[0], "F") == 0)
 		ret = parse_color(parts[1], config->floor_color);
 	else if (ft_strcmp(parts[0], "C") == 0)
 		ret = parse_color(parts[1], config->ceil_color);
 	else
-		ret = parse_error("Unknown element identifier");
+		ret = parse_error(INVALID_ELEM_I);
 	free_arr(parts, 0);
 	return (ret);
 }
 
-int	validate_elements(const t_config *config)
+/** A simpler switch statement */
+static int	validate_headers(const t_config *config)
 {
 	if (!config->no_path)
 		return (parse_error(MISSING_NO));
@@ -119,5 +108,42 @@ int	validate_elements(const t_config *config)
 	if (DEBUG)
 		printf("NO: %s. SO: %s. WE: %s. EA %s.\n", config->no_path,
 			config->so_path, config->we_path, config->ea_path);
+	return (0);
+}
+
+/**
+ * Iterates through each file line and parses the headers using
+ * [parse_header_line] if the current line isn't empty. If the
+ * current line is empty it just skips it and moves onto the
+ * next line. It stops when it encounters a map line denoted
+ * by [is_map_line] and sets [map_line]. It only returns -1 when
+ * there is an error in [get_next_line] or [parse_element],
+ * or there is no map in the file.
+ * @return 0 on success, -1 on failure.
+ */
+int	parse_headers(const int fd, t_config *config, char **map_line)
+{
+	char	*line;
+
+	*map_line = NULL;
+	line = get_next_line(fd, false);
+	while (line && !is_map_line(line))
+	{
+		if (!is_empty(line) && parse_header(config, line) == -1)
+			return (close(fd), free(line), -1);
+		free(line);
+		line = get_next_line(fd, false);
+	}
+	if (!line)
+	{
+		close(fd);
+		return (parse_error(H_GNL_ERR));
+	}
+	if (validate_headers(config) == -1)
+		return (close(fd), free(line), -1);
+	*map_line = ft_strjoin(line, get_next_line(fd, true));
+	free(line);
+	if (!*map_line)
+		return (parse_error(M_GNL_ERR));
 	return (0);
 }

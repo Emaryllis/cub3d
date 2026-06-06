@@ -1,30 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup_utils.c                                    :+:      :+:    :+:   */
+/*   parse_path.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/14 13:21:07 by egoh              #+#    #+#             */
-/*   Updated: 2026/05/14 13:21:07 by egoh             ###   ########.fr       */
+/*   Created: 2026/05/14 12:53:30 by egoh              #+#    #+#             */
+/*   Updated: 2026/05/14 12:53:30 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
+#include "parse.h"
 
-void	free_arr_range(char **arr, size_t start, size_t end)
+int	parse_path(const char *value, char **dest)
 {
-	size_t	i;
-
-	i = start;
-	while (i < end)
-		free(arr[i++]);
-	free(arr);
-}
-
-void	free_arr(char **arr, int start)
-{
-	while (arr[start])
-		free(arr[start++]);
-	free(arr);
+	if (*dest)
+		return (parse_error("Duplicate texture identifier"));
+	*dest = ft_strdup(value, true);
+	if (!*dest)
+		return (parse_error("Memory allocation failed"));
+	return (0);
 }
