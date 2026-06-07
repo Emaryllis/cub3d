@@ -14,11 +14,15 @@
 # define PARSE_H
 
 # include "main.h"
-# include "gnl/get_next_line.h"
 
-// Constant params to avoid magic numbers
+// Constant params to avoid magic variables
 # define TILE_BITS 2
 # define INIT_CAP 64
+# define TEXTURE_EXT ".xpm"
+
+// Invalid file
+# define INVALID_CONFIG_EXT "File must have .cub extension"
+# define OPEN_CONFIG_ERR "Could not open file"
 
 // Invalid Headers
 # define INVALID_ELEM_F "Invalid element format"
@@ -29,6 +33,16 @@
 # define MISSING_EA "Missing EA texture"
 # define COLOR_RANGE "Color value out of range [0, 255]"
 # define COLOR_LEN "Color must only have 3 components"
+
+// Invalid texture file
+# define NO_TEXTURE_FILE "No texture file provided"
+# define DUP_TEXTURE_ID "Duplicate texture identifier"
+# define TEXTURE_MALLOC_ERR "Failed to allocate memory for texture file path"
+# define INVALID_TEXTURE_EXT "Only .xpm texture files are allowed"
+# define OPEN_TEXTURE_ERR "Could not open texture file"
+# define TEXTURE_DIR_ERR "Error reading texture file"
+# define NO_ENV_ERR "Couldn't find home on env for texture path"
+# define HOME_MALLOC_ERR "Failed to allocate memory for home path expansion"
 
 // Malloc failure
 # define MASK_MALLOC_ERR "Failed to allocate memory for map validator mask"
@@ -59,10 +73,9 @@ typedef struct s_p_map
 }	t_p_map;
 
 // Parse Headers
-int		parse_headers(const int fd, t_config *config, char **map_line);
-
+int		parse_headers(const int fd, t_game *game, char **map_line);
 int		parse_map(t_config *config, int fd, char *map_line);
-int		parse_path(const char *value, char **dest);
+int		parse_path(const char *value, char **dest, char **envp);
 
 // Parse map bitmask getters & setters
 int		get_mask_state(const char *bit_valid, size_t x);
@@ -71,13 +84,15 @@ t_xy	get_curr_coord(const char *curr_coord);
 void	set_curr_coord(char *curr_coord, size_t x, size_t y);
 
 // Parse map utils
+char	*get_next_line(int fd, int ret_stash);
 int		init_map(t_config *config, t_p_map *p_map, int fd, char *map_line);
 int		read_char(t_map *map, t_p_map *p_map);
 int		next_row(t_map *map, t_p_map *p_map, size_t *grid_cap);
+void	migrate_bitmask_states(t_p_map *p_map);
 int		is_map_line(const char *line);
 
 // General parse utils
 int		check_commas(const char *line);
-int		hole_loc_err(int x, int y);
+int		hole_loc_err(size_t x, size_t y);
 
 #endif

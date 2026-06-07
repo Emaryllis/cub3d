@@ -113,15 +113,14 @@ int	audit_residual_leaks(t_map *map, t_p_map *p_map)
 		map->grid[p_map->curr.y][p_map->curr.x] = TILE_NULL;
 	if (map->plyr_face == TILE_NULL)
 		return (free(p_map->bit_valid), parse_error(MAP_NO_PLYR));
+	migrate_bitmask_states(p_map);
 	while (i <= p_map->max_x)
 	{
 		state = get_mask_state(p_map->bit_valid, i);
-		if (state == 2 || state == 3)
+		if (state == 2)
 		{
 			free(p_map->bit_valid);
-			if (state == 3)
-				return (hole_loc_err(i, p_map->curr.y));
-			return (hole_loc_err(i, -1));
+			return (hole_loc_err(i, p_map->curr.y));
 		}
 		i++;
 	}
@@ -146,7 +145,7 @@ int	parse_map(t_config *config, int fd, char *map_line)
 	int		c;
 
 	if (init_map(config, &p_map, fd, map_line) == -1)
-		return (-1);
+		return (close(fd), -1);
 	grid_cap = config->map.cap.y;
 	c = read_char(&config->map, &p_map);
 	while (c > 0)
@@ -158,6 +157,7 @@ int	parse_map(t_config *config, int fd, char *map_line)
 		else
 			c = process_char(&config->map, &p_map, (char)c);
 	}
+	close(fd);
 	if (c == -1)
 	{
 		free(p_map.bit_valid);

@@ -25,14 +25,14 @@ int	parse_file(t_game *game, const char *p)
 	char	*map_line;
 
 	if (DEBUG)
-		printf("File Name: %s\n", p);
+		printf("Config file: %s\n", p);
 	if (ft_strlen(p) < 5 || ft_strcmp(p + ft_strlen(p) - 4, ".cub") != 0)
-		return (parse_error("File must have .cub extension"));
+		return (parse_error(INVALID_CONFIG_EXT));
 	game->config = (t_config){0};
 	fd = open(p, O_RDONLY);
 	if (fd == -1)
-		return (parse_error("Could not open file"));
-	if (parse_headers(fd, &game->config, &map_line) == -1)
+		return (parse_error(OPEN_CONFIG_ERR));
+	if (parse_headers(fd, game, &map_line) == -1)
 		return (-1);
 	if (parse_map(&game->config, fd, map_line) == -1)
 		return (free(map_line), -1);

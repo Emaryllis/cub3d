@@ -21,7 +21,8 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/*.c")
 file(GLOB HEADERS "${CMAKE_SOURCE_DIR}/main.h")
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+file(GLOB_RECURSE LIB_HEADERS "${CMAKE_SOURCE_DIR}/src/lib/*.h" )
+add_executable(${PROJECT_NAME} ${SOURCES} ${LIB_HEADERS} ${HEADERS})
 set(WRAPPER "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.sh")
 if (ENABLE_C_FLAGS)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
@@ -32,7 +33,7 @@ message(STATUS "ENABLE_C_FLAGS=${ENABLE_C_FLAGS}")
 # VALGRIND LEAK CHECK
 # --------------------------------------------------------
 add_custom_target(leak_check
-        COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $<TARGET_FILE:${PROJECT_NAME}> "${CUB_FILE}"
+        COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes $<TARGET_FILE:${PROJECT_NAME}> "${CUB_FILE}"
         DEPENDS ${PROJECT_NAME}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Leak Check with Valgrind"
@@ -110,5 +111,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 message("${WRAPPER}")
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src/lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${MLX_LIB} X11 Xext m)

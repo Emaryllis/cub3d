@@ -76,28 +76,24 @@ int	check_commas(const char *line)
 	return (i);
 }
 
+static void	ft_putnbr_fd(size_t n, int fd)
+{
+	if (n >= 10)
+		ft_putnbr_fd(n / 10, fd);
+	write(fd, &(char){n % 10 + '0'}, 1);
+}
+
 /**
  * Detailed error reporting because looking through 1s just to
  * find 0(s) that shouldn't be there is a disservice to my eyes.
  * @return -1 (only used on failure)
  */
-int	hole_loc_err(int x, int y)
+int	hole_loc_err(size_t x, size_t y)
 {
-	write(STDERR_FILENO, "Error: Found hole in the map", 28);
-	if (x > 0 && y > 0)
-		write(STDERR_FILENO, " at ", 4);
-	if (y > 0)
-	{
-		write(STDERR_FILENO, "line ", 5);
-		ft_putnbr_fd(y + 1, STDERR_FILENO);
-	}
-	if (x > 0 && y > 0)
-		write(STDERR_FILENO, ", ", 2);
-	if (x > 0)
-	{
-		write(STDERR_FILENO, "column ", 7);
-		ft_putnbr_fd(x + 1, STDERR_FILENO);
-	}
-	write(STDERR_FILENO, "!", 1);
+	write(STDERR_FILENO, "Error: Found hole in the map at line ", 37);
+	ft_putnbr_fd(y + 1, STDERR_FILENO);
+	write(STDERR_FILENO, ", column ", 9);
+	ft_putnbr_fd(x + 1, STDERR_FILENO);
+	write(STDERR_FILENO, "!\n", 2);
 	return (-1);
 }

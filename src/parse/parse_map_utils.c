@@ -90,7 +90,7 @@ int	read_char(t_map *map, t_p_map *p_map)
 }
 
 /** Transmutes bitmask states to prepare for the next row. */
-static void	migrate_bitmask_states(t_p_map *p_map)
+void	migrate_bitmask_states(t_p_map *p_map)
 {
 	size_t	i;
 	int		state;
@@ -133,7 +133,7 @@ int	next_row(t_map *map, t_p_map *p_map, size_t *grid_cap)
 			return (parse_error(NR_RESIZE_ERR));
 		map->grid = new_grid;
 		new_grid_len = ft_realloc(map->grid_len, old_cap * sizeof(t_tile *),
-			*grid_cap * sizeof(size_t));
+				*grid_cap * sizeof(size_t));
 		if (!new_grid_len)
 			return (parse_error(NR_RESIZE_ERR));
 		map->grid_len = new_grid_len;

@@ -81,6 +81,7 @@ typedef struct s_game
 	void		*mlx;
 	void		*win;
 	t_config	config;
+	char		**envp;
 }	t_game;
 
 typedef enum e_key

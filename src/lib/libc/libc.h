@@ -18,9 +18,9 @@
 int		ft_atoi(const char *s);
 void	ft_bzero(void *s, size_t len);
 void	*ft_calloc(size_t amt, size_t size);
+int		ft_endswith(const char *str, const char *suffix, size_t str_len);
 int		ft_isdigit(int c);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-void	ft_putnbr_fd(int n, int fd);
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char	**ft_split(char const *s, char c);
 int		ft_strcmp(const char *s1, const char *s2);

@@ -53,8 +53,6 @@ static int	parse_color(const char *line, int out[3])
 	while (parts[i] && i < 3)
 	{
 		out[i] = parse_color_val(parts[i]);
-		if (DEBUG)
-			printf("Color: %d, %d, %d\n", out[0], out[1], out[2]);
 		if (out[i] == -1)
 			return (free_arr(parts, i), parse_error(COLOR_RANGE));
 		free(parts[i++]);
@@ -66,7 +64,7 @@ static int	parse_color(const char *line, int out[3])
 }
 
 /** Simple switch statement to do basic parsing when given a line. */
-static int	parse_header(t_config *config, const char *line)
+static int	parse_header(t_game *game, const char *line)
 {
 	char	**parts;
 	int		ret;
@@ -77,17 +75,17 @@ static int	parse_header(t_config *config, const char *line)
 	if (!parts[0] || !parts[1])
 		return (free_arr(parts, 0), parse_error(INVALID_ELEM_F));
 	if (ft_strcmp(parts[0], "NO") == 0)
-		ret = parse_path(parts[1], &config->no_path);
+		ret = parse_path(parts[1], &game->config.no_path, game->envp);
 	else if (ft_strcmp(parts[0], "SO") == 0)
-		ret = parse_path(parts[1], &config->so_path);
+		ret = parse_path(parts[1], &game->config.so_path, game->envp);
 	else if (ft_strcmp(parts[0], "WE") == 0)
-		ret = parse_path(parts[1], &config->we_path);
+		ret = parse_path(parts[1], &game->config.we_path, game->envp);
 	else if (ft_strcmp(parts[0], "EA") == 0)
-		ret = parse_path(parts[1], &config->ea_path);
+		ret = parse_path(parts[1], &game->config.ea_path, game->envp);
 	else if (ft_strcmp(parts[0], "F") == 0)
-		ret = parse_color(parts[1], config->floor_color);
+		ret = parse_color(parts[1], game->config.floor_color);
 	else if (ft_strcmp(parts[0], "C") == 0)
-		ret = parse_color(parts[1], config->ceil_color);
+		ret = parse_color(parts[1], game->config.ceil_color);
 	else
 		ret = parse_error(INVALID_ELEM_I);
 	free_arr(parts, 0);
@@ -97,6 +95,9 @@ static int	parse_header(t_config *config, const char *line)
 /** A simpler switch statement */
 static int	validate_headers(const t_config *config)
 {
+	const int	*f = config->floor_color;
+	const int	*c = config->ceil_color;
+
 	if (!config->no_path)
 		return (parse_error(MISSING_NO));
 	if (!config->so_path)
@@ -106,8 +107,12 @@ static int	validate_headers(const t_config *config)
 	if (!config->ea_path)
 		return (parse_error(MISSING_EA));
 	if (DEBUG)
+	{
+		printf("Floor color: %d, %d, %d. ", f[0], f[1], f[2]);
+		printf("Ceiling color: %d, %d, %d.\n", c[0], c[1], c[2]);
 		printf("NO: %s. SO: %s. WE: %s. EA %s.\n", config->no_path,
 			config->so_path, config->we_path, config->ea_path);
+	}
 	return (0);
 }
 
@@ -121,7 +126,7 @@ static int	validate_headers(const t_config *config)
  * or there is no map in the file.
  * @return 0 on success, -1 on failure.
  */
-int	parse_headers(const int fd, t_config *config, char **map_line)
+int	parse_headers(const int fd, t_game *game, char **map_line)
 {
 	char	*line;
 
@@ -129,7 +134,7 @@ int	parse_headers(const int fd, t_config *config, char **map_line)
 	line = get_next_line(fd, false);
 	while (line && !is_map_line(line))
 	{
-		if (!is_empty(line) && parse_header(config, line) == -1)
+		if (!is_empty(line) && parse_header(game, line) == -1)
 			return (close(fd), free(line), -1);
 		free(line);
 		line = get_next_line(fd, false);
@@ -139,11 +144,11 @@ int	parse_headers(const int fd, t_config *config, char **map_line)
 		close(fd);
 		return (parse_error(H_GNL_ERR));
 	}
-	if (validate_headers(config) == -1)
+	if (validate_headers(&game->config) == -1)
 		return (close(fd), free(line), -1);
 	*map_line = ft_strjoin(line, get_next_line(fd, true));
 	free(line);
 	if (!*map_line)
-		return (parse_error(M_GNL_ERR));
+		return (close(fd), parse_error(M_GNL_ERR));
 	return (0);
 }
