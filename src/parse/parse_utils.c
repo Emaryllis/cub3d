@@ -12,36 +12,6 @@
 
 #include "parse.h"
 
-/**
- * Initializes the t_map struct and the t_p_map struct.
- * @return 0 on success, -1 on failure.
- */
-int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
-{
-	p_map->fd = fd;
-	p_map->map_line = map_line;
-	p_map->max_x = 0;
-	p_map->curr = (t_xy){0, 0};
-	p_map->cap = (t_xy){INIT_CAP, INIT_CAP};
-	p_map->bit_valid = ft_calloc((p_map->cap.x >> TILE_BITS) + 1, sizeof(char));
-	if (!p_map->bit_valid)
-		return (parse_error(MASK_MALLOC_ERR));
-	config->map.cap = (t_xy){INIT_CAP, INIT_CAP};
-	config->map.grid = ft_calloc(config->map.cap.y, sizeof(t_tile *));
-	if (!config->map.grid)
-		return (parse_error(GRID_MALLOC_ERR));
-	config->map.grid[0] = malloc(sizeof(t_tile) * config->map.cap.x);
-	if (!config->map.grid[0])
-		return (parse_error(GRID_MALLOC_ERR));
-	config->map.grid_len = ft_calloc(INIT_CAP, sizeof(size_t));
-	if (!config->map.grid_len)
-		return (parse_error(GRID_MALLOC_ERR));
-	config->map.size = (t_xy){0, 1};
-	config->map.plyr = (t_xy){0, 0};
-	config->map.plyr_face = TILE_NULL;
-	return (0);
-}
-
 /** Checks if the current string (get_next_line) is a valid map line */
 int	is_map_line(const char *line)
 {

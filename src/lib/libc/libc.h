@@ -15,7 +15,6 @@
 
 # include <stddef.h>
 
-int		ft_atoi(const char *s);
 void	ft_bzero(void *s, size_t len);
 void	*ft_calloc(size_t amt, size_t size);
 int		ft_endswith(const char *str, const char *suffix, size_t str_len);

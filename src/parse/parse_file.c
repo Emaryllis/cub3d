@@ -29,6 +29,8 @@ int	parse_file(t_game *game, const char *p)
 	if (ft_strlen(p) < 5 || ft_strcmp(p + ft_strlen(p) - 4, ".cub") != 0)
 		return (parse_error(INVALID_CONFIG_EXT));
 	game->config = (t_config){0};
+	game->config.floor_color = INIT_COLOR;
+	game->config.ceil_color = INIT_COLOR;
 	fd = open(p, O_RDONLY);
 	if (fd == -1)
 		return (parse_error(OPEN_CONFIG_ERR));

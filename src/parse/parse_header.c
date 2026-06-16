@@ -14,7 +14,8 @@
 
 static int	parse_color_val(const char *str)
 {
-	int	val;
+	int			val;
+	const char	*tmp = str;
 
 	if (!str || !*str)
 		return (-1);
@@ -22,7 +23,7 @@ static int	parse_color_val(const char *str)
 	while (ft_isdigit(*str))
 	{
 		val = val * 10 + (*str - '0');
-		if (val > 255)
+		if (val > 255 || str - tmp == 3)
 			return (-1);
 		str++;
 	}
@@ -39,11 +40,14 @@ static int	parse_color_val(const char *str)
  * No character should be present before or after the sequence.
  * @param line should be in format "R,G,B" where R, G, B are integers in [0, 255]
  */
-static int	parse_color(const char *line, int out[3])
+static int	parse_color(const char *line, int *out)
 {
 	char	**parts;
+	int		vals[3];
 	int		i;
 
+	if (*out != INIT_COLOR)
+		return (parse_error(DUP_COLOR_ID));
 	if (check_commas(line) != 2)
 		return (parse_error(COLOR_LEN));
 	parts = ft_split(line, ',');
@@ -52,14 +56,15 @@ static int	parse_color(const char *line, int out[3])
 	i = 0;
 	while (parts[i] && i < 3)
 	{
-		out[i] = parse_color_val(parts[i]);
-		if (out[i] == -1)
+		vals[i] = parse_color_val(parts[i]);
+		if (vals[i] == -1)
 			return (free_arr(parts, i), parse_error(COLOR_RANGE));
 		free(parts[i++]);
 	}
 	if (i != 3 || parts[3])
 		return (free_arr(parts, i), parse_error(COLOR_LEN));
 	free(parts);
+	*out = vals[0] << 16 | vals[1] << 8 | vals[2];
 	return (0);
 }
 
@@ -67,7 +72,7 @@ static int	parse_color(const char *line, int out[3])
 static int	parse_header(t_game *game, const char *line)
 {
 	char	**parts;
-	int		ret;
+	int		r;
 
 	parts = ft_split(line, ' ');
 	if (!parts)
@@ -75,43 +80,42 @@ static int	parse_header(t_game *game, const char *line)
 	if (!parts[0] || !parts[1])
 		return (free_arr(parts, 0), parse_error(INVALID_ELEM_F));
 	if (ft_strcmp(parts[0], "NO") == 0)
-		ret = parse_path(parts[1], &game->config.no_path, game->envp);
+		r = parse_path(parts[1], &game->config.tex_no, game->mlx, game->envp);
 	else if (ft_strcmp(parts[0], "SO") == 0)
-		ret = parse_path(parts[1], &game->config.so_path, game->envp);
+		r = parse_path(parts[1], &game->config.tex_so, game->mlx, game->envp);
 	else if (ft_strcmp(parts[0], "WE") == 0)
-		ret = parse_path(parts[1], &game->config.we_path, game->envp);
+		r = parse_path(parts[1], &game->config.tex_we, game->mlx, game->envp);
 	else if (ft_strcmp(parts[0], "EA") == 0)
-		ret = parse_path(parts[1], &game->config.ea_path, game->envp);
+		r = parse_path(parts[1], &game->config.tex_ea, game->mlx, game->envp);
 	else if (ft_strcmp(parts[0], "F") == 0)
-		ret = parse_color(parts[1], game->config.floor_color);
+		r = parse_color(parts[1], &game->config.floor_color);
 	else if (ft_strcmp(parts[0], "C") == 0)
-		ret = parse_color(parts[1], game->config.ceil_color);
+		r = parse_color(parts[1], &game->config.ceil_color);
 	else
-		ret = parse_error(INVALID_ELEM_I);
+		r = parse_error(INVALID_ELEM_I);
 	free_arr(parts, 0);
-	return (ret);
+	return (r);
 }
 
 /** A simpler switch statement */
 static int	validate_headers(const t_config *config)
 {
-	const int	*f = config->floor_color;
-	const int	*c = config->ceil_color;
-
-	if (!config->no_path)
+	if (!config->tex_no.mlx_img)
 		return (parse_error(MISSING_NO));
-	if (!config->so_path)
+	if (!config->tex_so.mlx_img)
 		return (parse_error(MISSING_SO));
-	if (!config->we_path)
+	if (!config->tex_we.mlx_img)
 		return (parse_error(MISSING_WE));
-	if (!config->ea_path)
+	if (!config->tex_ea.mlx_img)
 		return (parse_error(MISSING_EA));
+	if (config->floor_color == INIT_COLOR)
+		return (parse_error(MISSING_FLOOR));
+	if (config->ceil_color == INIT_COLOR)
+		return (parse_error(MISSING_CEIL));
 	if (DEBUG)
 	{
-		printf("Floor color: %d, %d, %d. ", f[0], f[1], f[2]);
-		printf("Ceiling color: %d, %d, %d.\n", c[0], c[1], c[2]);
-		printf("NO: %s. SO: %s. WE: %s. EA %s.\n", config->no_path,
-			config->so_path, config->we_path, config->ea_path);
+		printf("Floor color: 0x%06X\n", config->floor_color);
+		printf("Ceiling color: 0x%06X\n", config->ceil_color);
 	}
 	return (0);
 }
@@ -144,11 +148,13 @@ int	parse_headers(const int fd, t_game *game, char **map_line)
 		close(fd);
 		return (parse_error(H_GNL_ERR));
 	}
+	if (!is_map_line(line))
+		return (close(fd), free(line), parse_error(NO_MAP));
 	if (validate_headers(&game->config) == -1)
 		return (close(fd), free(line), -1);
 	*map_line = ft_strjoin(line, get_next_line(fd, true));
 	free(line);
 	if (!*map_line)
-		return (close(fd), parse_error(M_GNL_ERR));
+		return (close(fd), parse_error(M_JOIN_ERR));
 	return (0);
 }

@@ -25,6 +25,9 @@
 # include <X11/keysym.h>			// XK_ key constants
 # include <X11/X.h>					// X11 events constants
 # include <stdbool.h>				// bool type
+# include <limits.h>				// limits
+# include <float.h>					// float limits
+# include <stdint.h>				// fixed-width integer types
 # include "libc/libc.h"				// Libc functions
 
 # define WIN_W 800
@@ -39,14 +42,9 @@
 
 typedef enum e_tile
 {
-	TILE_NULL,		// Sentinel value for end of row
 	TILE_SPACE,		// ' '
 	TILE_EMPTY,		// '0'
-	TILE_WALL,		// '1'
-	TILE_PLAYER_N,	// 'N'
-	TILE_PLAYER_S,	// 'S'
-	TILE_PLAYER_E,	// 'E'
-	TILE_PLAYER_W,	// 'W'
+	TILE_WALL		// '1'
 }	t_tile;
 
 typedef struct s_coords
@@ -55,31 +53,57 @@ typedef struct s_coords
 	size_t	y;
 }	t_xy;
 
+/*
+ * Struct used for the player entity.
+ * - pos_x & pos_y is used as world vectors.
+ * - dir_x & dir_y is used as direction vectors.
+ * - planeX & planeY is used as camera plane vectors.
+ */
+typedef struct s_player
+{
+	double	pos_x;
+	double	pos_y;
+	double	dir_x;
+	double	dir_y;
+	double	plane_x;
+	double	plane_y;
+}   t_plyr;
+
 typedef struct s_map
 {
-	t_tile	**grid;
-	size_t	*grid_len;
-	t_xy	size;
-	t_xy	cap;
-	t_xy	plyr;
-	t_tile	plyr_face;
-}	t_map;
+	uint8_t	*grid;  // 1D flat array (saves 75% memory vs int)
+	size_t	height;
+	size_t	width;
+}   t_map;
 
+// MLX Image struct storage
+typedef struct s_img
+{
+	void	*mlx_img;
+	int		*pixels;
+	int		line_len;
+	int		bpp;
+	int		endian;
+}   t_img;
+
+// Main config (floor_color & ceil_color stores packed RGB ints)
 typedef struct s_config
 {
-	char	*no_path;
-	char	*so_path;
-	char	*we_path;
-	char	*ea_path;
-	int		floor_color[3];
-	int		ceil_color[3];
 	t_map	map;
-}	t_config;
+	t_plyr	player;
+	t_img	tex_no;
+	t_img	tex_so;
+	t_img	tex_we;
+	t_img	tex_ea;
+	int		floor_color;
+	int		ceil_color;
+}   t_config;
 
 typedef struct s_game
 {
-	void		*mlx;
+	void        *mlx;
 	void		*win;
+	t_img		screen;
 	t_config	config;
 	char		**envp;
 }	t_game;
@@ -93,7 +117,7 @@ typedef enum e_key
 	KEY_D = XK_d,
 	KEY_LEFT = XK_Left,
 	KEY_RIGHT = XK_Right,
-} t_key;
+}	t_key;
 
 // Initializers
 void	init_listener(t_game *game);

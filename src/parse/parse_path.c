@@ -12,7 +12,7 @@
 
 #include "parse.h"
 
-static int	is_valid_path(const char *path)
+static int	is_path(const char *path)
 {
 	int		fd;
 	char	buffer[1];
@@ -29,7 +29,7 @@ static int	is_valid_path(const char *path)
 	return (0);
 }
 
-static int	expand_tilde(char **dest, char **envp)
+static int	res_tilde(char **dest, char **envp)
 {
 	size_t	i;
 	char	*tmp;
@@ -63,18 +63,32 @@ static int	expand_tilde(char **dest, char **envp)
  * @param dest Storage address of value
  * @return 0 on success, -1 on failure
  */
-int	parse_path(const char *value, char **dest, char **envp)
+// Add void *mlx to the signature
+int	parse_path(const char *value, t_img *img, void *mlx, char **envp)
 {
+	char	*dest;
+	int		tmp[2];
+
 	if (!value)
 		return (parse_error(NO_TEXTURE_FILE));
-	if (*dest)
-		return (parse_error(DUP_TEXTURE_ID));
-	*dest = ft_strdup(value, true);
-	if (!*dest)
-		return (parse_error(TEXTURE_MALLOC_ERR));
-	if (!ft_endswith(*dest, TEXTURE_EXT, ft_strlen(*dest)))
+	if (!ft_endswith(value, TEXTURE_EXT, ft_strlen(value)))
 		return (parse_error(INVALID_TEXTURE_EXT));
-	if (**dest == '~' && expand_tilde(dest, envp) == -1)
-		return (-1);
-	return (is_valid_path(*dest));
+	if (img->mlx_img)
+		return (parse_error(DUP_TEXTURE_ID));
+	dest = ft_strdup(value, true);
+	if (!dest)
+		return (parse_error(TEXTURE_MALLOC_ERR));
+	if (*dest == '~' && res_tilde(&dest, envp) == -1)
+		return (free(dest), -1);
+	if (is_path(dest) == -1)
+		return (free(dest), -1);
+	img->mlx_img = mlx_xpm_file_to_image(mlx, dest, &tmp[0], &tmp[1]);
+	free(dest);
+	if (!img->mlx_img)
+		return (parse_error(TEXTURE_MALLOC_ERR));
+	img->pixels = (int *)mlx_get_data_addr(img->mlx_img, &img->bpp,
+			&img->line_len, &img->endian);
+	if (DEBUG)
+		printf("Texture path: %s", value);
+	return (0);
 }

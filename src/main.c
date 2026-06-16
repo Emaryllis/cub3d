@@ -15,9 +15,11 @@
 static int	init_struct(t_game *game, const char *file_path, char **envp)
 {
 	game->mlx = mlx_init();
-	game->win = mlx_new_window(game->mlx, WIN_W, WIN_H, WIN_TITLE);
 	game->envp = envp;
-	return (parse_file(game, file_path));
+	if (parse_file(game, file_path) == -1)
+		return (-1);
+	game->win = mlx_new_window(game->mlx, WIN_W, WIN_H, WIN_TITLE);
+	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
