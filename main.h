@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/20 00:33:06 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/06 06:17:13 by egoh             ###   ########.fr       */
+/*   Created: 2026/06/06 09:47:07 by egoh              #+#    #+#             */
+/*   Updated: 2026/06/19 08:00:00 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,30 +30,40 @@
 # include <stdint.h>				// fixed-width integer types
 # include "libc/libc.h"				// Libc functions
 
-# define WIN_W 800
-# define WIN_H 600
-# define WIN_TITLE "cub3d"
-# define DEBUG true
+# define INFO true
 
-// Error messages
+# define KEY_IDX_W     0
+# define KEY_IDX_A     1
+# define KEY_IDX_S     2
+# define KEY_IDX_D     3
+# define KEY_IDX_LEFT  4
+# define KEY_IDX_RIGHT 5
+# define KEY_COUNT     6
+
+// Init struct errors
+# define MLX_INIT_ERR "Failed to initalize MLX"
+# define MLX_WIN_ERR "Failed to create MLX window"
+# define MLX_SCREEN_ERR "Failed to create screen buffer"
+
+// Generic Errors
 # define RET_ERR -1
 # define MALLOC_ERR "Memory allocation failed"
 # define NO_FILE "No file found"
 
+/**
+ * Enum used for the map grid.
+ * - TILE_SPACE represents a whitespace
+ * - TILE_EMPTY represents '0'
+ * - TILE_WALL represents '1'
+ */
 typedef enum e_tile
 {
-	TILE_SPACE,		// ' '
-	TILE_EMPTY,		// '0'
-	TILE_WALL		// '1'
+	TILE_SPACE,
+	TILE_EMPTY,
+	TILE_WALL
 }	t_tile;
 
-typedef struct s_coords
-{
-	size_t	x;
-	size_t	y;
-}	t_xy;
-
-/*
+/**
  * Struct used for the player entity.
  * - pos_x & pos_y is used as world vectors.
  * - dir_x & dir_y is used as direction vectors.
@@ -67,24 +77,32 @@ typedef struct s_player
 	double	dir_y;
 	double	plane_x;
 	double	plane_y;
-}   t_plyr;
+	int		last_mouse_x;
+	bool	mouse_captured;
+}	t_plyr;
 
+/**
+ * Uses a 1D flat array to remove pointer chasing every frame and
+ * uses uint8_t to save 75% memory compared to integers
+ */
 typedef struct s_map
 {
-	uint8_t	*grid;  // 1D flat array (saves 75% memory vs int)
+	uint8_t	*grid;
 	size_t	height;
 	size_t	width;
-}   t_map;
+}	t_map;
 
 // MLX Image struct storage
 typedef struct s_img
 {
-	void	*mlx_img;
+	void	*img_ptr;
 	int		*pixels;
 	int		line_len;
 	int		bpp;
 	int		endian;
-}   t_img;
+	int		width;
+	int		height;
+}	t_img;
 
 // Main config (floor_color & ceil_color stores packed RGB ints)
 typedef struct s_config
@@ -97,15 +115,16 @@ typedef struct s_config
 	t_img	tex_ea;
 	int		floor_color;
 	int		ceil_color;
-}   t_config;
+}	t_config;
 
 typedef struct s_game
 {
-	void        *mlx;
+	void		*mlx;
 	void		*win;
 	t_img		screen;
 	t_config	config;
 	char		**envp;
+	bool		keys[KEY_COUNT];
 }	t_game;
 
 typedef enum e_key
@@ -119,17 +138,19 @@ typedef enum e_key
 	KEY_RIGHT = XK_Right,
 }	t_key;
 
-// Initializers
-void	init_listener(t_game *game);
+// Parsing & Validation
 int		parse_file(t_game *game, const char *p);
+
+// Main Logic
+int		render(t_game *game);
 
 // Cleanup
 void	cleanup(t_game *game);
 
 // Utils
-void	free_arr_range(char **arr, size_t start, size_t end);
 void	free_arr(char **arr, int start);
 int		is_empty(const char *s);
 int		parse_error(const char *msg);
 void	*dynamic_realloc(void **ptr, size_t size, size_t *capacity);
+
 #endif

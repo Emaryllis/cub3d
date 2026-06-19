@@ -24,8 +24,6 @@ int	parse_file(t_game *game, const char *p)
 	int		fd;
 	char	*map_line;
 
-	if (DEBUG)
-		printf("Config file: %s\n", p);
 	if (ft_strlen(p) < 5 || ft_strcmp(p + ft_strlen(p) - 4, ".cub") != 0)
 		return (parse_error(INVALID_CONFIG_EXT));
 	game->config = (t_config){0};

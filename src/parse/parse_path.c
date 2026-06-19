@@ -58,37 +58,34 @@ static int	res_tilde(char **dest, char **envp)
  * No need to expand minus (-) for old pwd since that
  * is only expected for cd builtin. No need to free
  * on error since main cleanup does that already.
+ * Null check isn't needed for pixels since
+ * mlx_get_data_addr is an image setter wrapper
  *
  * @param value Value of header key
- * @param dest Storage address of value
  * @return 0 on success, -1 on failure
  */
-// Add void *mlx to the signature
 int	parse_path(const char *value, t_img *img, void *mlx, char **envp)
 {
 	char	*dest;
-	int		tmp[2];
 
 	if (!value)
 		return (parse_error(NO_TEXTURE_FILE));
 	if (!ft_endswith(value, TEXTURE_EXT, ft_strlen(value)))
 		return (parse_error(INVALID_TEXTURE_EXT));
-	if (img->mlx_img)
+	if (img->img_ptr)
 		return (parse_error(DUP_TEXTURE_ID));
 	dest = ft_strdup(value, true);
 	if (!dest)
 		return (parse_error(TEXTURE_MALLOC_ERR));
-	if (*dest == '~' && res_tilde(&dest, envp) == -1)
+	if ((*dest == '~' && res_tilde(&dest, envp) == -1) || is_path(dest) == -1)
 		return (free(dest), -1);
-	if (is_path(dest) == -1)
-		return (free(dest), -1);
-	img->mlx_img = mlx_xpm_file_to_image(mlx, dest, &tmp[0], &tmp[1]);
+	img->img_ptr = mlx_xpm_file_to_image(mlx, dest, &img->width, &img->height);
 	free(dest);
-	if (!img->mlx_img)
-		return (parse_error(TEXTURE_MALLOC_ERR));
-	img->pixels = (int *)mlx_get_data_addr(img->mlx_img, &img->bpp,
+	if (!img->img_ptr)
+		return (parse_error(CONVERT_MALLOC_ERR));
+	img->pixels = (int *)mlx_get_data_addr(img->img_ptr, &img->bpp,
 			&img->line_len, &img->endian);
-	if (DEBUG)
+	if (PARSE_DEBUG)
 		printf("Texture path: %s", value);
 	return (0);
 }

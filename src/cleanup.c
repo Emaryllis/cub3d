@@ -14,10 +14,10 @@
 
 static void	destroy_image(void *mlx, t_img *img)
 {
-	if (img && img->mlx_img)
+	if (img && img->img_ptr)
 	{
-		mlx_destroy_image(mlx, img->mlx_img);
-		img->mlx_img = NULL;
+		mlx_destroy_image(mlx, img->img_ptr);
+		img->img_ptr = NULL;
 	}
 }
 
@@ -29,12 +29,9 @@ void	cleanup(t_game *game)
 	destroy_image(game->mlx, &game->config.tex_so);
 	destroy_image(game->mlx, &game->config.tex_we);
 	destroy_image(game->mlx, &game->config.tex_ea);
-	//destroy_image(game->mlx, &game->screen);
-	if (game->config.map.grid)
-	{
-		free(game->config.map.grid);
-		game->config.map.grid = NULL;
-	}
+	destroy_image(game->mlx, &game->screen);
+	free(game->config.map.grid);
+	game->config.map.grid = NULL;
 	if (game->mlx)
 	{
 		if (game->win)

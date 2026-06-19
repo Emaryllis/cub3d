@@ -23,7 +23,7 @@ static int	parse_color_val(const char *str)
 	while (ft_isdigit(*str))
 	{
 		val = val * 10 + (*str - '0');
-		if (val > 255 || str - tmp == 3)
+		if (val > COLOR_MAX || str - tmp == COLOR_MAX_LEN)
 			return (-1);
 		str++;
 	}
@@ -43,7 +43,7 @@ static int	parse_color_val(const char *str)
 static int	parse_color(const char *line, int *out)
 {
 	char	**parts;
-	int		vals[3];
+	int		ret[3];
 	int		i;
 
 	if (*out != INIT_COLOR)
@@ -56,15 +56,15 @@ static int	parse_color(const char *line, int *out)
 	i = 0;
 	while (parts[i] && i < 3)
 	{
-		vals[i] = parse_color_val(parts[i]);
-		if (vals[i] == -1)
+		ret[i] = parse_color_val(parts[i]);
+		if (ret[i] == -1)
 			return (free_arr(parts, i), parse_error(COLOR_RANGE));
 		free(parts[i++]);
 	}
 	if (i != 3 || parts[3])
 		return (free_arr(parts, i), parse_error(COLOR_LEN));
 	free(parts);
-	*out = vals[0] << 16 | vals[1] << 8 | vals[2];
+	*out = ret[0] << RED_SHIFT | ret[1] << GREEN_SHIFT | ret[2] << BLUE_SHIFT;
 	return (0);
 }
 
@@ -100,19 +100,19 @@ static int	parse_header(t_game *game, const char *line)
 /** A simpler switch statement */
 static int	validate_headers(const t_config *config)
 {
-	if (!config->tex_no.mlx_img)
+	if (!config->tex_no.img_ptr)
 		return (parse_error(MISSING_NO));
-	if (!config->tex_so.mlx_img)
+	if (!config->tex_so.img_ptr)
 		return (parse_error(MISSING_SO));
-	if (!config->tex_we.mlx_img)
+	if (!config->tex_we.img_ptr)
 		return (parse_error(MISSING_WE));
-	if (!config->tex_ea.mlx_img)
+	if (!config->tex_ea.img_ptr)
 		return (parse_error(MISSING_EA));
 	if (config->floor_color == INIT_COLOR)
 		return (parse_error(MISSING_FLOOR));
 	if (config->ceil_color == INIT_COLOR)
 		return (parse_error(MISSING_CEIL));
-	if (DEBUG)
+	if (PARSE_DEBUG)
 	{
 		printf("Floor color: 0x%06X\n", config->floor_color);
 		printf("Ceiling color: 0x%06X\n", config->ceil_color);
@@ -146,7 +146,7 @@ int	parse_headers(const int fd, t_game *game, char **map_line)
 	if (!line)
 	{
 		close(fd);
-		return (parse_error(H_GNL_ERR));
+		return (parse_error(GNL_EOL_ERR));
 	}
 	if (!is_map_line(line))
 		return (close(fd), free(line), parse_error(NO_MAP));

@@ -48,13 +48,13 @@ static int	realloc_bitmask_cap(t_p_map *p_map)
 	new_bytes = ((p_map->cap.x * 2) >> TILE_BITS) + 1;
 	new_ptr = ft_realloc(p_map->bit_valid, old_bytes, new_bytes);
 	if (!new_ptr)
-		return (parse_error(EBC_MASK_MALLOC_ERR));
+		return (parse_error(MASK_RESIZE_ERR));
 	ft_bzero(new_ptr + old_bytes, new_bytes - old_bytes);
 	p_map->bit_valid = new_ptr;
 	new_row = resize_buffer(p_map->grid[p_map->curr.y],
 			&p_map->cap.x, sizeof(t_p_tile));
 	if (!new_row)
-		return (parse_error(EBC_RESIZE_ERR));
+		return (parse_error(ROW_RESIZE_ERR));
 	p_map->grid[p_map->curr.y] = new_row;
 	return (0);
 }

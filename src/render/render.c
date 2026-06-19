@@ -5,15 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 07:02:01 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/07 07:02:01 by egoh             ###   ########.fr       */
+/*   Created: 2026/06/18 08:04:57 by egoh              #+#    #+#             */
+/*   Updated: 2026/06/18 08:04:57 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
+#include "render.h"
 
 int	render(t_game *game)
 {
-	(void)game;
+	if (render_init(game) == -1)
+		return (-1);
+	render_listener(game);
 	return (0);
 }

@@ -12,7 +12,7 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 512
+#  define BUFFER_SIZE 4096
 # endif
 # if BUFFER_SIZE > 125000 || BUFFER_SIZE <= 0
 #  undef BUFFER_SIZE

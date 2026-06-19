@@ -143,13 +143,15 @@ int	parse_map(t_config *config, int fd, char *map_line)
 	c = read_char(&p_map);
 	while (c > 0)
 	{
-		if (DEBUG)
+		if (PARSE_DEBUG)
 			printf("%c", c);
 		if (c == '\n')
 			c = next_row(&p_map, &grid_cap);
 		else
 			c = process_char(config, &p_map, (char)c, vecs);
 	}
+	if (PARSE_DEBUG)
+		printf("\n");
 	close(fd);
 	if (c == -1 || audit_residual_leaks(config, &p_map) == -1)
 		return (cleanup_p_map(&p_map), -1);
