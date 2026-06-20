@@ -57,7 +57,7 @@ typedef struct s_init_step
 
 // Initialization
 int		render_init(t_game *game);
-void	init_ray(t_game *game, int x, t_ray *ray);
+void	init_ray(const t_game *game, int x, t_ray *ray);
 
 void	draw_vertical_strip(t_game *game, int x, const t_ray *ray,
 			const t_img *tex);
