@@ -36,7 +36,7 @@ int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
 	if (!p_map->grid_len)
 		return (parse_error(GRID_MALLOC_ERR));
 	p_map->size = (t_xy){0, 1};
-	config->player = (t_plyr){NAN, NAN, NAN, NAN, NAN, NAN};
+	config->player = (t_plyr){NAN, NAN, NAN, NAN, NAN, NAN, 0, false};
 	return (0);
 }
 

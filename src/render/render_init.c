@@ -22,8 +22,6 @@ int	render_init(t_game *game)
 		return (parse_error(MLX_SCREEN_ERR));
 	game->screen.pixels = (int *)mlx_get_data_addr(game->screen.img_ptr,
 			&game->screen.bpp, &game->screen.line_len, &game->screen.endian);
-	game->config.player.last_mouse_x = 0;
-	game->config.player.mouse_captured = false;
 	if (INFO)
 		printf("Game struct initialized successfully!\n");
 	return (0);

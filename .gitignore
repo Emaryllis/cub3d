@@ -1,3 +1,10 @@
+# CMake
 cub3d.sh
 cmake-build-debug/
+
+# Makefile
+*.o
+cub3d
+
+# Shared
 minilibx-linux/

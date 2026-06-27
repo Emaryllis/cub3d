@@ -18,8 +18,8 @@
 # define WIN_W 800
 # define WIN_H 600
 # define LARGE_NUM 1e30
-# define MOVE_SPEED 0.08 // Tiles per frame
-# define ROT_SPEED 0.05 // Radians per frame
+# define MOVE_SPEED 0.005 // Tiles per frame
+# define ROT_SPEED 0.003 // Radians per frame
 # define MOUSE_SENSITIVITY 0.003
 # define PLYR_HITBOX 0.12
 # define WIN_TITLE "cub3d"

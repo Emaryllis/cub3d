@@ -45,5 +45,5 @@ void	set_mask_state(char *bit_valid, size_t x, int state)
 	idx = x >> TILE_BITS;
 	mask = (1 << TILE_BITS) - 1;
 	shift = (x & mask) << 1;
-	bit_valid[idx] = bit_valid[idx] & ~(mask << shift) | state << shift;
+	bit_valid[idx] = (bit_valid[idx] & ~(mask << shift)) | state << shift;
 }
