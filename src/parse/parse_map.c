@@ -91,7 +91,7 @@ static int	process_char(t_config *config, t_p_map *p_map, char c,
 			i++;
 		config->player = (t_plyr){p_map->curr.x + 0.5, p_map->curr.y + 0.5,
 			vecs[i][0], vecs[i][1],
-			-vecs[i][1] * 0.66, vecs[i][0] * 0.66};
+			-vecs[i][1] * FOV, vecs[i][0] * FOV};
 		p_map->grid[p_map->curr.y][p_map->curr.x] = TILE_P_EMPTY;
 	}
 	p_map->curr.x++;

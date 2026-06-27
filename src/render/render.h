@@ -34,7 +34,6 @@ typedef struct s_ray
 	double	side_dist_x;
 	double	side_dist_y;
 	double	perp_wall_dist;
-	double	raw_dist;
 	double	wall_x; // Exact hit point on wall face (0.0 to 1.0)
 	int		step_x;
 	int		step_y;
@@ -42,6 +41,7 @@ typedef struct s_ray
 	int		map_y;
 	int		draw_start;
 	int		draw_end;
+	int		line_height;
 	uint8_t	side; // 0 = NS face, 1 = EW face
 }	t_ray;
 

@@ -41,9 +41,8 @@ static void	draw_wall(t_game *game, int x, const t_ray *ray, const t_img *tex)
 	if ((ray->side == 0 && ray->dir_x < 0)
 		|| (ray->side == 1 && ray->dir_y > 0))
 		tex_xy[0] = tex->width - tex_xy[0] - 1;
-	step = (double)tex->height / (ray->draw_end - ray->draw_start);
-	tex_pos = (ray->draw_start - WIN_H / 2.0
-			+ (ray->draw_end - ray->draw_start) / 2.0) * step;
+	step = (double)tex->height / ray->line_height;
+	tex_pos = (ray->draw_start - (WIN_H - ray->line_height) / 2.0) * step;
 	y = ray->draw_start;
 	while (y < ray->draw_end)
 	{

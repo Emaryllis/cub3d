@@ -54,21 +54,17 @@ static void	cast_ray(const t_game *game, t_ray *ray)
 	}
 }
 
-static void	calc_wall_bounds(t_ray *ray, const t_plyr *plyr)
+static void	calc_wall_bounds(t_ray *ray)
 {
-	int	line_height;
-
 	if (ray->side == 0)
-		ray->raw_dist = ray->side_dist_x - ray->delta_dist_x;
+		ray->perp_wall_dist = ray->side_dist_x - ray->delta_dist_x;
 	else
-		ray->raw_dist = ray->side_dist_y - ray->delta_dist_y;
-	ray->perp_wall_dist = ray->raw_dist * (ray->dir_x * plyr->dir_x
-			+ ray->dir_y * plyr->dir_y);
+		ray->perp_wall_dist = ray->side_dist_y - ray->delta_dist_y;
 	if (ray->perp_wall_dist <= DBL_EPSILON)
 		ray->perp_wall_dist = DBL_EPSILON;
-	line_height = (int)(WIN_H / ray->perp_wall_dist);
-	ray->draw_start = (-line_height + WIN_H) / 2;
-	ray->draw_end = (line_height + WIN_H) / 2;
+	ray->line_height = (int)(WIN_H / ray->perp_wall_dist);
+	ray->draw_start = (-ray->line_height + WIN_H) / 2;
+	ray->draw_end = (ray->line_height + WIN_H) / 2;
 	if (ray->draw_start < 0)
 		ray->draw_start = 0;
 	if (ray->draw_end >= WIN_H)
@@ -80,9 +76,9 @@ static void	calc_tex_coords(t_game *game, t_ray *ray, t_img **tex)
 	const t_plyr	*plyr = &game->config.player;
 
 	if (ray->side == 0)
-		ray->wall_x = plyr->pos_y + ray->raw_dist * ray->dir_y;
+		ray->wall_x = plyr->pos_y + ray->perp_wall_dist * ray->dir_y;
 	else
-		ray->wall_x = plyr->pos_x + ray->raw_dist * ray->dir_x;
+		ray->wall_x = plyr->pos_x + ray->perp_wall_dist * ray->dir_x;
 	ray->wall_x -= floor(ray->wall_x);
 	*tex = select_texture(&game->config, ray->side,
 			ray->dir_x, ray->dir_y);
@@ -99,7 +95,7 @@ void	raycast(t_game *game)
 	{
 		init_ray(game, x, &ray);
 		cast_ray(game, &ray);
-		calc_wall_bounds(&ray, &game->config.player);
+		calc_wall_bounds(&ray);
 		calc_tex_coords(game, &ray, &tex);
 		draw_vertical_strip(game, x, &ray, tex);
 		x++;

@@ -40,6 +40,8 @@
 # define KEY_IDX_RIGHT 5
 # define KEY_COUNT     6
 
+# define FOV 0.66
+
 // Init struct errors
 # define MLX_INIT_ERR "Failed to initalize MLX"
 # define MLX_WIN_ERR "Failed to create MLX window"
