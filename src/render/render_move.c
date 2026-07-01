@@ -6,7 +6,7 @@
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 07:38:58 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/18 08:24:45 by egoh             ###   ########.fr       */
+/*   Updated: 2026/07/01 17:32:15 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
  * pointer enters the window. I would have liked to capture the mouse movement
  * without actually moving the mouse, but that would require forbidden X11
  * function calls so (╯°□°)╯︵ ┻━┻
- *
  */
 int	handle_mouse(int x, int y, void *param)
 {
@@ -41,10 +40,7 @@ int	handle_mouse(int x, int y, void *param)
 	return (0);
 }
 
-/**
- * Rotates the player by setting direction
- * and plane using simple trig
- */
+/** Rotates the player by setting direction and plane using simple trig */
 void	rotate_player(t_plyr *plyr, double rot_speed)
 {
 	const double	old_dir_x = plyr->dir_x;

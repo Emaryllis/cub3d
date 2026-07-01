@@ -6,12 +6,17 @@
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/19 01:15:46 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/19 01:15:46 by egoh             ###   ########.fr       */
+/*   Updated: 2026/07/01 17:50:07 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "render.h"
 
+/**
+ * Renders the ceiling portion of a vertical screen slice.
+ * Fills pixels from the top of the viewport down to [draw_start]
+ * using the configured ceiling color.
+ */
 static void	draw_ceiling(t_game *game, int x, const t_ray *ray)
 {
 	int	y;
@@ -21,6 +26,11 @@ static void	draw_ceiling(t_game *game, int x, const t_ray *ray)
 		game->screen.pixels[y++ *WIN_W + x] = game->config.ceil_color;
 }
 
+/**
+ * Renders the floor portion of a vertical screen slice.
+ * Fills pixels from [draw_end] down to the bottom of the viewport
+ * using the configured floor color.
+ */
 static void	draw_floor(t_game *game, int x, const t_ray *ray)
 {
 	int	y;
@@ -30,6 +40,13 @@ static void	draw_floor(t_game *game, int x, const t_ray *ray)
 		game->screen.pixels[y++ *WIN_W + x] = game->config.floor_color;
 }
 
+/**
+ * Renders the textured wall segment for a vertical screen slice.
+ * Calculates the horizontal texture coordinate & adjusting for
+ * mirroring based on ray direction, determines the texture sampling
+ * step size, and loops through the visible wall span to map
+ * individual texture pixels onto the screen buffer column.
+ */
 static void	draw_wall(t_game *game, int x, const t_ray *ray, const t_img *tex)
 {
 	double	step;

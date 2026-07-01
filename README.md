@@ -88,10 +88,13 @@ The program handles cascading resource teardowns to guarantee clean, leak-free r
 cmake --build cmake-build-debug/ --target leak_check
 ```
 
-## Resources
+## Resources/References
 
-* [**Amanatides, J., & Woo, A. (1987): "A Fast Voxel Traversal Algorithm for Ray Tracing"**](http://www.cse.yorku.ca/~amana/research/grid.pdf) — Theoretical foundation for discrete grid-stepping logic and digital differential analysis (DDA) without uniform spatial sampling overhead.
-* [**Heckbert, P. S. (1986): "Survey of Texture Mapping"**](https://graphicsinterface.org/wp-content/uploads/2015/03/gi1986-37.pdf) — Foundational computer graphics text outlining affine coordinate mapping, spatial projections, and texture coordinate sampling over discrete screen spans.
-* [**Bailey, D. G., & Johnston, C. T. (2007): "Single Pass Connected Components Analysis"**](https://www-ist.massey.ac.nz/dbailey/sprg/pdfs/2007_IVCNZ_282.pdf) — Spatial data processing paper detailing how to analyze grid topologies in a single pass by caching row-neighborhood contexts and deferring boundary validations until row boundaries change, minimizing memory footprints in stream-oriented environments.
-* [**Ullman, J. D. (2006): "Syntax-Directed Translation Schemes"**](http://infolab.stanford.edu/~ullman/dragon/slides2.pdf) — Stanford InfoLab architectural guide for single-pass input parsing and evaluation, where evaluation of downstream structural validation rules is performed efficiently on-the-fly without needing an explicit multi-pass parse tree structure.
-* [**MinilibX Source Repository**](https://github.com/42paris/minilibx-linux) — Target software graphics API specifying windowing abstractions, OS subsystem event hooks, and direct pixel-buffer manipulation constraints.
+* [Amanatides, J., & Woo, A. (1987): A Fast Voxel Traversal Algorithm for Ray Tracing](http://www.cse.yorku.ca/~amana/research/grid.pdf)
+* [Heckbert, P. S. (1986): Survey of Texture Mapping](https://graphicsinterface.org/wp-content/uploads/2015/03/gi1986-37.pdf)
+* [Bratus, S., et al. (2025): Best Practices for Secure Data Intake, Data Modeling, and Data Design (DARPA SafeDocs Program)](https://www.darpa.mil/sites/default/files/attachment/2025-06/best-practices-secure-data-intake-sergey-bratus-darpa-i2o.pdf)
+* [Mirzaei, I., Mojaveri, S. J., & Najafizadeh, A. (2026): Stateless Network-Aware Adaptive Bitrate Streaming over IPFS](https://arxiv.org/abs/2606.29574)
+* [University of Waterloo - CS 466: Advanced Algorithms (2015): Amortized Analysis](https://student.cs.uwaterloo.ca/~cs466/Old_courses/F15/4-AmortizedAnalysis.pdf)
+* [MinilibX Source Repository](https://github.com/42paris/minilibx-linux)
+* Cormen TH, Leiserson CE, Rivest RL, Stein C (2022): Introduction to Algorithms, 4th Edition, Chapter 16 (Amortized Analysis)
+* Borodin, A., & El-Yaniv, R. (1998): Online Computation and Competitive Analysis

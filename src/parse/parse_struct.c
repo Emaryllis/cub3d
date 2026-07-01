@@ -6,16 +6,12 @@
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 06:36:07 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/16 06:36:07 by egoh             ###   ########.fr       */
+/*   Updated: 2026/07/01 17:47:14 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-/**
- * Initializes the t_map struct and the t_p_map struct.
- * @return 0 on success, -1 on failure.
- */
 int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
 {
 	p_map->fd = fd;
@@ -40,6 +36,10 @@ int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
 	return (0);
 }
 
+/**
+ * Turns the 2D array used in parsing & validation
+ * into a padded 1D array to avoid pointer chasing.
+ */
 int	flatten_map(t_map *map, t_p_map *p_map)
 {
 	size_t	y;

@@ -6,7 +6,7 @@
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 07:02:01 by egoh              #+#    #+#             */
-/*   Updated: 2026/06/19 03:53:52 by egoh             ###   ########.fr       */
+/*   Updated: 2026/07/01 17:50:29 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@ static t_img	*select_texture(t_config *config, uint8_t side,
 	return (&config->tex_no);
 }
 
+/**
+ * Executes the DDA loop to step the ray through the grid tile-by-tile.
+ * Advances along the closest axis until it intersects a wall or exits the map.
+ * Updates coordinates, distances, and hit orientation inline within the struct.
+ */
 static void	cast_ray(const t_game *game, t_ray *ray)
 {
 	int	hit;
@@ -54,6 +59,12 @@ static void	cast_ray(const t_game *game, t_ray *ray)
 	}
 }
 
+/**
+ * Calculates the perpendicular distance to the wall and maps it to screen
+ * height coordinates. Determines the vertical span (start and end pixels)
+ * for rendering the wall slice, safely clamping the bounds using [DBL_EPSILON]
+ * to prevent division by zero and out-of-bounds screen drawing.
+ */
 static void	calc_wall_bounds(t_ray *ray)
 {
 	if (ray->side == 0)
@@ -71,6 +82,12 @@ static void	calc_wall_bounds(t_ray *ray)
 		ray->draw_end = WIN_H;
 }
 
+/**
+ * Calculates the exact intersection point on the wall tile to
+ * determine texture mapping. It isolates the fractional component,
+ * [wall_x], to find the texture X-coordinate and selects the
+ * appropriate directional texture asset based on ray orientation.
+ */
 static void	calc_tex_coords(t_game *game, t_ray *ray, t_img **tex)
 {
 	const t_plyr	*plyr = &game->config.player;
@@ -84,6 +101,7 @@ static void	calc_tex_coords(t_game *game, t_ray *ray, t_img **tex)
 			ray->dir_x, ray->dir_y);
 }
 
+/** Simple loop wrapper for all helper render functions */
 void	raycast(t_game *game)
 {
 	t_ray	ray;

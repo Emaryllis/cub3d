@@ -1,9 +1,9 @@
 F 220,100,0
 C 225,30,0
-NO /home/ubuntu/Github/cub3d/textures/grass_fields.xpm
-SO /home/ubuntu/Github/cub3d/textures/smile.xpm
-WE /home/ubuntu/Github/cub3d/textures/eye.xpm
-EA /home/ubuntu/Github/cub3d/textures/zebra.xpm
+NO ./textures/grass_fields.xpm
+SO ./textures/smile.xpm
+WE ./textures/eye.xpm
+EA ./textures/zebra.xpm
 
         1111111111111111111111111
         1000000000110000000000001

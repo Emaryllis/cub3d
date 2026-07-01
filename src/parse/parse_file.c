@@ -6,7 +6,7 @@
 /*   By: egoh <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 15:31:23 by egoh              #+#    #+#             */
-/*   Updated: 2026/05/15 15:31:23 by egoh             ###   ########.fr       */
+/*   Updated: 2026/07/01 16:47:46 by egoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 /**
  * Parsing the header first since under normal conditions, it is
  * expected for the header to come before the map content.
- * @param game
- * @param p
- * @return
  */
 int	parse_file(t_game *game, const char *p)
 {
