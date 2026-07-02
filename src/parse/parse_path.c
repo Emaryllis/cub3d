@@ -85,7 +85,7 @@ int	parse_path(const char *value, t_img *img, void *mlx, char **envp)
 		return (parse_error(CONVERT_MALLOC_ERR));
 	img->pixels = (int *)mlx_get_data_addr(img->img_ptr, &img->bpp,
 			&img->line_len, &img->endian);
-	if (PARSE_DEBUG)
+	if (HEADER_DEBUG)
 		printf("Texture path: %s", value);
 	return (0);
 }

@@ -90,11 +90,12 @@ cmake --build cmake-build-debug/ --target leak_check
 
 ## Resources/References
 
-* [Amanatides, J., & Woo, A. (1987): A Fast Voxel Traversal Algorithm for Ray Tracing](http://www.cse.yorku.ca/~amana/research/grid.pdf)
-* [Heckbert, P. S. (1986): Survey of Texture Mapping](https://graphicsinterface.org/wp-content/uploads/2015/03/gi1986-37.pdf)
-* [Bratus, S., et al. (2025): Best Practices for Secure Data Intake, Data Modeling, and Data Design (DARPA SafeDocs Program)](https://www.darpa.mil/sites/default/files/attachment/2025-06/best-practices-secure-data-intake-sergey-bratus-darpa-i2o.pdf)
-* [Mirzaei, I., Mojaveri, S. J., & Najafizadeh, A. (2026): Stateless Network-Aware Adaptive Bitrate Streaming over IPFS](https://arxiv.org/abs/2606.29574)
+* [John Amanatides & Andrew Woo (1987): A Fast Voxel Traversal Algorithm for Ray Tracing](https://www.researchgate.net/publication/2611491_A_Fast_Voxel_Traversal_Algorithm_for_Ray_Tracing)
+* [Paul Heckbert (1986): Survey of Texture Mapping](https://publications.ri.cmu.edu/survey-of-texture-mapping)
+* [Sergey Bratus (2025): Best Practices for Secure Data Intake, Data Modeling, and Data Design (DARPA SafeDocs Program)](https://www.darpa.mil/sites/default/files/attachment/2025-06/best-practices-secure-data-intake-sergey-bratus-darpa-i2o.pdf)
+* [Iliya Mirzaei, Shabnam Jafarzade Mojaveri, Amirhossein Najafizadeh (2026): Stateless Network-Aware Adaptive Bitrate Streaming over IPFS](https://arxiv.org/abs/2606.29574)
 * [University of Waterloo - CS 466: Advanced Algorithms (2015): Amortized Analysis](https://student.cs.uwaterloo.ca/~cs466/Old_courses/F15/4-AmortizedAnalysis.pdf)
+* [Allan Borodin, Ran El-Yaniv (1998): Online Computation and Competitive Analysis](https://scispace.com/pdf/online-computation-and-competitive-analysis-t096jbqm8l.pdf)
+* [Sándor P. Fekete, Jan-Marc Reinhardt, Christian Scheffer (2017): An Efficient Data Structure for Dynamic Two-Dimensional Reconfiguration](https://arxiv.org/abs/1702.07696)
 * [MinilibX Source Repository](https://github.com/42paris/minilibx-linux)
 * Cormen TH, Leiserson CE, Rivest RL, Stein C (2022): Introduction to Algorithms, 4th Edition, Chapter 16 (Amortized Analysis)
-* Borodin, A., & El-Yaniv, R. (1998): Online Computation and Competitive Analysis

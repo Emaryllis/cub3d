@@ -47,3 +47,46 @@ void	set_mask_state(char *bit_valid, size_t x, int state)
 	shift = (x & mask) << 1;
 	bit_valid[idx] = (bit_valid[idx] & ~(mask << shift)) | state << shift;
 }
+
+/**
+ * Allocates a larger bitmask for horizontal tracking, copying existing
+ * packed bytes into the expanded tracking footprint via [ft_realloc].
+ * @returns 1 on success, -1 on failure
+ */
+int	realloc_bitmask_cap(t_p_map *p_map)
+{
+	char		*new_ptr;
+	t_p_tile	*new_row;
+	size_t		old_bytes;
+	size_t		new_bytes;
+
+	old_bytes = (p_map->cap.x >> TILE_BITS) + 1;
+	new_bytes = ((p_map->cap.x * 2) >> TILE_BITS) + 1;
+	new_ptr = ft_realloc(p_map->bit_valid, old_bytes, new_bytes);
+	if (!new_ptr)
+		return (parse_error(MASK_RESIZE_ERR));
+	ft_bzero(new_ptr + old_bytes, new_bytes - old_bytes);
+	p_map->bit_valid = new_ptr;
+	new_row = resize_buffer(p_map->grid[p_map->curr.y],
+			&p_map->cap.x, sizeof(t_p_tile));
+	if (!new_row)
+		return (parse_error(ROW_RESIZE_ERR));
+	p_map->grid[p_map->curr.y] = new_row;
+	return (0);
+}
+
+/** Transmutes bitmask states to prepare for the next row. */
+void	migrate_bitmask_states(t_p_map *p_map)
+{
+	size_t	i;
+
+	i = 0;
+	while (i <= p_map->max.x)
+	{
+		if (get_mask_state(p_map->bit_valid, i) == 3)
+			set_mask_state(p_map->bit_valid, i, 2);
+		else
+			set_mask_state(p_map->bit_valid, i, 0);
+		i++;
+	}
+}

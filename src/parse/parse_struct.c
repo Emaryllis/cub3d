@@ -12,11 +12,11 @@
 
 #include "parse.h"
 
-int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
+int	init_map(t_plyr *plyr, t_p_map *p_map, int fd, char *map_line)
 {
 	p_map->fd = fd;
 	p_map->map_line = map_line;
-	p_map->max_x = 0;
+	p_map->max = (t_xy){0, 0};
 	p_map->curr = (t_xy){0, 0};
 	p_map->cap = (t_xy){INIT_CAP, INIT_CAP};
 	p_map->bit_valid = ft_calloc((p_map->cap.x >> TILE_BITS) + 1, sizeof(char));
@@ -31,8 +31,7 @@ int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
 	p_map->grid_len = ft_calloc(INIT_CAP, sizeof(size_t));
 	if (!p_map->grid_len)
 		return (parse_error(GRID_MALLOC_ERR));
-	p_map->size = (t_xy){0, 1};
-	config->player = (t_plyr){NAN, NAN, NAN, NAN, NAN, NAN, 0, false};
+	*plyr = (t_plyr){NAN, NAN, NAN, NAN, NAN, NAN, 0, false};
 	return (0);
 }
 
@@ -40,13 +39,13 @@ int	init_map(t_config *config, t_p_map *p_map, int fd, char *map_line)
  * Turns the 2D array used in parsing & validation
  * into a padded 1D array to avoid pointer chasing.
  */
-int	flatten_map(t_map *map, t_p_map *p_map)
+int	finalize_parse(t_map *map, t_p_map *p_map)
 {
 	size_t	y;
 	size_t	x;
 
-	map->width = p_map->max_x + 1;
-	map->height = p_map->size.y;
+	map->width = p_map->max.x + 1;
+	map->height = p_map->max.y;
 	map->grid = malloc(sizeof(uint8_t) * map->width * map->height);
 	if (!map->grid)
 		return (cleanup_p_map(p_map), -1);

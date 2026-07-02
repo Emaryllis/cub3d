@@ -15,7 +15,8 @@
 
 # include "main.h"
 
-# define PARSE_DEBUG true
+# define HEADER_DEBUG false
+# define PRINT_MAP_DEBUG true
 
 // Constant params to avoid magic variables
 # define TILE_BITS 0b10
@@ -81,11 +82,11 @@
 
 /**
  * Enum used for the map grid during parsing.
- * - TILE_P_NULL is used for null terminating each row
- * - TILE_P_SPACE represents a whitespace
- * - TILE_P_EMPTY represents '0'
- * - TILE_P_WALL represents '1'
- * - TILE_P_PLAYER represents 'N', 'S', 'E', 'W'
+ * - TILE_P_NULL: null terminator for each row
+ * - TILE_P_SPACE: whitespace
+ * - TILE_P_EMPTY: '0'
+ * - TILE_P_WALL: '1'
+ * - TILE_P_PLAYER: 'N', 'S', 'E', 'W'
  */
 typedef enum e_p_tile
 {
@@ -102,6 +103,18 @@ typedef struct s_coords
 	size_t	y;
 }	t_xy;
 
+/**
+ * Used for the map state during the streaming & validation phase.
+ *
+ * - fd: open file descriptor for streaming read calls
+ * - map_line: remaining buffer from GNL from header parsing
+ * - bit_valid: packed byte array (2 bits/column) for enclosure lookahead
+ * - grid: 2D jagged array storing tile enums before 1D flattening
+ * - grid_len: exact parsed length per row, used to pad short rows later
+ * - max: max bounding box (max map column & row indexes)
+ * - curr: current processing coordinate
+ * - cap: current allocation limits, multiplied by 2 when running out of memory
+ */
 typedef struct s_p_map
 {
 	int			fd;
@@ -109,15 +122,14 @@ typedef struct s_p_map
 	char		*bit_valid;
 	t_p_tile	**grid;
 	size_t		*grid_len;
-	size_t		max_x;
+	t_xy		max;
 	t_xy		curr;
-	t_xy		size;
 	t_xy		cap;
 }	t_p_map;
 
 // Parse Headers
 int		parse_headers(const int fd, t_game *game, char **map_line);
-int		parse_map(t_config *config, int fd, char *map_line);
+int		parse_map(t_map *map, t_plyr *plyr, int fd, char *map_line);
 int		parse_path(const char *value, t_img *img, void *mlx, char **envp);
 
 // Parse map bitmask getters & setters
@@ -131,6 +143,8 @@ char	*get_next_line(int fd, int ret_stash);
 int		read_char(t_p_map *p_map);
 int		next_row(t_p_map *p_map, size_t *grid_cap);
 void	migrate_bitmask_states(t_p_map *p_map);
+int		realloc_bitmask_cap(t_p_map *p_map);
+void	*resize_buffer(void *ptr, size_t *cap_track, size_t unit_size);
 int		is_map_line(const char *line);
 
 // General parse utils
@@ -138,8 +152,8 @@ int		check_commas(const char *line);
 int		hole_loc_err(size_t x, size_t y);
 
 // Map struct manipulation
-int		init_map(t_config *config, t_p_map *p_map, int fd, char *map_line);
-int		flatten_map(t_map *map, t_p_map *p_map);
+int		init_map(t_plyr *plyr, t_p_map *p_map, int fd, char *map_line);
+int		finalize_parse(t_map *map, t_p_map *p_map);
 void	cleanup_p_map(t_p_map *p_map);
 
 #endif

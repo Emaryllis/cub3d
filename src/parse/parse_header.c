@@ -112,7 +112,7 @@ static int	validate_headers(const t_config *config)
 		return (parse_error(MISSING_FLOOR));
 	if (config->ceil_color == INIT_COLOR)
 		return (parse_error(MISSING_CEIL));
-	if (PARSE_DEBUG)
+	if (HEADER_DEBUG)
 	{
 		printf("Floor color: 0x%06X\n", config->floor_color);
 		printf("Ceiling color: 0x%06X\n", config->ceil_color);
