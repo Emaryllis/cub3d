@@ -82,7 +82,7 @@ int	parse_path(const char *value, t_img *img, void *mlx, char **envp)
 	img->img_ptr = mlx_xpm_file_to_image(mlx, dest, &img->width, &img->height);
 	free(dest);
 	if (!img->img_ptr)
-		return (parse_error(CONVERT_MALLOC_ERR));
+		return (parse_error(XPM_ERR));
 	img->pixels = (int *)mlx_get_data_addr(img->img_ptr, &img->bpp,
 			&img->line_len, &img->endian);
 	if (HEADER_DEBUG)

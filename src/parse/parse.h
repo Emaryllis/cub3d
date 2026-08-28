@@ -62,7 +62,7 @@
 # define TEXTURE_DIR_ERR "Error reading texture file"
 # define NO_ENV_ERR "Couldn't find home on env for texture path"
 # define HOME_MALLOC_ERR "Failed to allocate memory for home path expansion"
-# define CONVERT_MALLOC_ERR "Failed to allocate memory when converting texture"
+# define XPM_ERR "Couldn't convert XPM! Invalid format or insufficient memory"
 
 // Invalid Map
 # define GNL_EOL_ERR "Unexpected EOL while finding map line"

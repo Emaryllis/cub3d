@@ -52,7 +52,7 @@ static t_p_tile	char_to_tile(t_p_map *p_map, char c)
  *   (either explicitly parsed or implicitly absent due to a shorter previous
  *   row), return a hole error to prevent out of bounds ray casting.
  * - If the current column exceeds the tracked maximum width, update the global
- *   rightmost bounding box edge so implicit-space validation covers the full map.
+ *   rightmost bounding box edge so implicit-space validation covers the map.
  * - If the lookahead column exceeds bitmask capacity, expand the bitmask
  *   allocation to safely write the next state without heap overflow.
  * - Add a wall requirement for the below and right neighbor to ensure full
@@ -71,8 +71,8 @@ static int	eval_gate(t_p_map *p_map, t_p_tile tile, bool first_row)
 		&& p_map->grid[p_map->curr.y][p_map->curr.x - 1] == TILE_P_SPACE)
 		return (hole_loc_err(p_map->curr.x - 1, p_map->curr.y));
 	if (tile == TILE_P_EMPTY && p_map->curr.y > 0
-	&& (p_map->grid_len[p_map->curr.y - 1] <= p_map->curr.x
-		|| p_map->grid[p_map->curr.y - 1][p_map->curr.x] == TILE_P_SPACE))
+		&& (p_map->grid_len[p_map->curr.y - 1] <= p_map->curr.x
+			|| p_map->grid[p_map->curr.y - 1][p_map->curr.x] == TILE_P_SPACE))
 		return (hole_loc_err(p_map->curr.x, p_map->curr.y - 1));
 	if (p_map->curr.x > p_map->max.x)
 		p_map->max.x = p_map->curr.x;
